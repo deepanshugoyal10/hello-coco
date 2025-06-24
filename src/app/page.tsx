@@ -1,103 +1,121 @@
+"use client";
+
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
+import Link from "next/link";
 
-export default function Home() {
+type Item = {
+  id: number;
+  name: string;
+  price: number;
+  image: string;
+};
+
+const items: Item[] = [
+  { id: 1, name: "Coffee", price: 3, image: "/coffee.png" },
+  { id: 2, name: "Fries", price: 2, image: "/fries.png" },
+  { id: 3, name: "Burger", price: 5, image: "/burger.png" },
+];
+
+export default function OrderPage() {
+  const [cart, setCart] = useState<Record<number, number>>({});
+
+  const addToCart = (id: number) =>
+    setCart((prev) => ({ ...prev, [id]: (prev[id] ?? 0) + 1 }));
+
+  const removeFromCart = (id: number) =>
+    setCart((prev) => {
+      const quantity = prev[id];
+      if (!quantity) return prev;
+
+      if (quantity === 1) {
+        const newCart = { ...prev };
+        delete newCart[id];
+        return newCart;
+      }
+      return { ...prev, [id]: quantity - 1 };
+    });
+
+  const totalItems = Object.values(cart).reduce((a, b) => a + b, 0);
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <div className="max-w-md mx-auto min-h-screen bg-[#f9f6f3] p-6 flex flex-col font-sans">
+      <h1 className="text-4xl font-bold text-[#3e2723] text-center tracking-wide mb-8">
+        ☕ Coffee Cart
+      </h1>
+      <div className="flex flex-col gap-6">
+        {items.map((item) => {
+          const quantity = cart[item.id] ?? 0;
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+          return (
+            <div
+              key={item.id}
+              className="flex items-center justify-between bg-white rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow duration-300"
+            >
+              <div className="flex items-center gap-5">
+                <Image
+                  src={item.image}
+                  alt={item.name}
+                  width={72}
+                  height={72}
+                  className="rounded-xl object-cover"
+                  priority
+                />
+                <div>
+                  <h2 className="text-xl font-semibold text-[#3e2723]">
+                    {item.name}
+                  </h2>
+                  <p className="text-[#5d4037] font-medium">
+                    ${item.price.toFixed(2)}
+                  </p>
+                </div>
+              </div>
+
+              {quantity === 0 ? (
+                <button
+                  onClick={() => addToCart(item.id)}
+                  className="bg-[#6d4c41] hover:bg-[#5d4037] text-white px-5 py-2 rounded-full font-semibold shadow-sm transition-colors select-none"
+                >
+                  Add
+                </button>
+              ) : (
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => removeFromCart(item.id)}
+                    className="bg-[#d7ccc8] hover:bg-[#c2b3ae] text-[#3e2723] rounded-full w-10 h-10 flex items-center justify-center font-bold text-xl"
+                  >
+                    -
+                  </button>
+                  <span className="text-[#3e2723] font-bold">{quantity}</span>
+                  <button
+                    onClick={() => addToCart(item.id)}
+                    className="bg-[#6d4c41] hover:bg-[#5d4037] text-white rounded-full w-10 h-10 flex items-center justify-center font-bold text-xl"
+                  >
+                    +
+                  </button>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      <AnimatePresence>
+        {totalItems > 0 && (
+          <motion.div
+            initial={{ y: 120, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 120, opacity: 0 }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            className="fixed bottom-5 left-5 right-5 bg-[#3e2723] text-white text-center py-4 font-bold text-xl rounded-3xl shadow-lg cursor-pointer select-none"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+            <Link href="/payment" className="block">
+              Place Order ({totalItems} item{totalItems > 1 ? "s" : ""}) →
+            </Link>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
