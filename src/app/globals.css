@@ -136,3 +136,16 @@ body {
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
 }
+
+.cart-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+
+.cart-scroll::-webkit-scrollbar-track {
+  background: #f3f4f6;
+}
+
+.cart-scroll::-webkit-scrollbar-thumb {
+  background: #9ca3af;
+  border-radius: 3px;
+}

@@ -33,7 +33,32 @@ export const metadata: Metadata = {
 //   );
 // }
 
+// import VideoOverlay from "../components/VideoLandingPage";
+// import { store } from "../store";
+// import { Provider } from "react-redux";
+
+// export default function RootLayout({
+//   children,
+// }: {
+//   children: React.ReactNode;
+// }) {
+//   return (
+//     <html lang="en">
+//       <body>
+//         <Provider store={store}>
+//           <VideoOverlay>{children}</VideoOverlay>
+//         </Provider>
+//       </body>
+//     </html>
+//   );
+// }
+
+import { Inter } from "next/font/google";
+import "./globals.css";
+import ReduxProvider from "../components/ReduxProvider";
 import VideoOverlay from "../components/VideoLandingPage";
+
+const inter = Inter({ subsets: ["latin"] });
 
 export default function RootLayout({
   children,
@@ -42,8 +67,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>
-        <VideoOverlay>{children}</VideoOverlay>
+      <body className={inter.className}>
+        <ReduxProvider>
+          <VideoOverlay>{children}</VideoOverlay>
+        </ReduxProvider>
       </body>
     </html>
   );

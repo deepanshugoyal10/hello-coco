@@ -1,213 +1,134 @@
 "use client";
 
 import React, { useState } from "react";
+import { menuData } from "@/data/menuData";
+import { useCart } from "@/hooks/useCart";
+import TabHeader from "@/components/TabHeader";
+import MenuList from "@/components/MenuList";
+import CartSection from "../../components/CartSection";
 import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
+import { useAppDispatch, useAppSelector } from "@/hooks/redux";
+import { addItem, updateQuantity } from "@/store/cartSlice";
+import { MenuItem } from "@/types/menu";
 
-interface MenuItem {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  calories: number;
-  image: string;
-  isVeg: boolean;
-}
+// export default function CoffeeOrderPage() {
+//   const router = useRouter();
+//   const [activeTab, setActiveTab] = useState("Hot");
+//   const tabs = ["Hot", "Cold", "Sides"];
 
-const menuData: Record<string, MenuItem[]> = {
-  Cold: [
-    {
-      id: "1",
-      name: "Date Cortado",
-      description:
-        "Double shot blonde espresso, paired with date flavoured sauc..",
-      price: 383.25,
-      calories: 168,
-      image: "/api/placeholder/80/80",
-      isVeg: true,
-    },
-    {
-      id: "2",
-      name: "Churro Frappuccino",
-      description:
-        "Signature Starbucks Frappuccino paired with flavours of chu..",
-      price: 519.75,
-      calories: 368,
-      image: "/api/placeholder/80/80",
-      isVeg: true,
-    },
-    {
-      id: "3",
-      name: "Churro Latte",
-      description:
-        "Signature Starbucks Latte paired with flavours of churro wi..",
-      price: 430.5,
-      calories: 243,
-      image: "/api/placeholder/80/80",
-      isVeg: true,
-    },
-  ],
-  Hot: [
-    {
-      id: "4",
-      name: "Americano",
-      description: "Rich espresso with hot water for a bold, smooth taste",
-      price: 295.0,
-      calories: 15,
-      image: "/api/placeholder/80/80",
-      isVeg: true,
-    },
-    {
-      id: "5",
-      name: "Cappuccino",
-      description: "Espresso with steamed milk and a layer of foam",
-      price: 340.0,
-      calories: 120,
-      image: "/api/placeholder/80/80",
-      isVeg: true,
-    },
-    {
-      id: "6",
-      name: "Flat White",
-      description: "Double shot espresso with steamed milk",
-      price: 385.0,
-      calories: 155,
-      image: "/api/placeholder/80/80",
-      isVeg: true,
-    },
-  ],
-  Sides: [
-    {
-      id: "7",
-      name: "Croissant",
-      description: "Buttery, flaky pastry perfect with your coffee",
-      price: 180.0,
-      calories: 280,
-      image: "/api/placeholder/80/80",
-      isVeg: true,
-    },
-    {
-      id: "8",
-      name: "Blueberry Muffin",
-      description: "Fresh blueberries in a moist, tender muffin",
-      price: 220.0,
-      calories: 320,
-      image: "/api/placeholder/80/80",
-      isVeg: true,
-    },
-  ],
-  Mercha: [
-    {
-      id: "9",
-      name: "Coffee Mug",
-      description: "Premium ceramic mug with brand logo",
-      price: 850.0,
-      calories: 0,
-      image: "/api/placeholder/80/80",
-      isVeg: true,
-    },
-    {
-      id: "10",
-      name: "Tumbler",
-      description: "Insulated stainless steel tumbler",
-      price: 1200.0,
-      calories: 0,
-      image: "/api/placeholder/80/80",
-      isVeg: true,
-    },
-  ],
-};
+//   const { cart, getItemQuantity, updateQuantity, addItem, getTotalCartPrice } =
+//     useCart();
+
+//   const handleTabChange = (tab: string) => {
+//     setActiveTab(tab);
+//   };
+
+//   return (
+//     <div className="min-h-screen bg-gray-50 overflow-hidden">
+//       <TabHeader
+//         tabs={tabs}
+//         activeTab={activeTab}
+//         onTabChange={handleTabChange}
+//       />
+
+//       <MenuList
+//         items={menuData[activeTab]}
+//         activeTab={activeTab}
+//         cartLength={cart.length}
+//         getItemQuantity={getItemQuantity}
+//         onAddItem={addItem}
+//         onUpdateQuantity={updateQuantity}
+//       />
+
+//       {cart.length > 0 && (
+//         <div className="fixed bottom-4 left-4 right-4 z-40">
+//           <motion.button
+//             whileHover={{ scale: 1.02 }}
+//             whileTap={{ scale: 0.98 }}
+//             onClick={() => {
+//               // Navigate to cart route
+//               console.log("Navigate to cart");
+//               router.push("/cart");
+//             }}
+//             className="w-full bg-[#54311B] hover:bg-[#3d2515] text-white py-4 rounded-lg font-medium shadow-lg transition-colors flex items-center justify-center gap-2"
+//           >
+//             <span>Go To Cart</span>
+//             <span className="bg-white/20 text-white px-2 py-1 rounded-full text-sm">
+//               {cart.length}
+//             </span>
+//           </motion.button>
+//         </div>
+//       )}
+
+//       {/* <CartSection cart={cart} totalPrice={getTotalCartPrice()} /> */}
+//     </div>
+//   );
+// }
 
 export default function CoffeeOrderPage() {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState("Hot");
   const tabs = ["Hot", "Cold", "Sides"];
 
+  const dispatch = useAppDispatch();
+  const { items: cart, totalItems } = useAppSelector((state) => state.cart);
+
+  const getItemQuantity = (itemId: string) => {
+    return cart.find((item) => item.id === itemId)?.quantity || 0;
+  };
+
+  const handleAddItem = (itemId: string) => {
+    const menuItem = findMenuItem(itemId);
+    if (menuItem) {
+      dispatch(addItem(menuItem));
+    }
+  };
+
+  const handleUpdateQuantity = (itemId: string, change: number) => {
+    dispatch(updateQuantity({ id: itemId, change }));
+  };
+
+  const findMenuItem = (itemId: string): MenuItem | undefined => {
+    for (const category of Object.values(menuData)) {
+      const item = category.find((item) => item.id === itemId);
+      if (item) return item;
+    }
+    return undefined;
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header Tabs */}
-      <div className="sticky top-0 z-10 bg-white/90 backdrop-blur-md shadow-sm border-b border-gray-200">
-        <div className="px-4 py-3">
-          <div className="flex gap-1 overflow-x-auto no-scrollbar">
-            {tabs.map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`px-6 py-2 rounded-full whitespace-nowrap text-sm font-medium transition-all duration-300 ${
-                  activeTab === tab
-                    ? "bg-[#54311B] text-white shadow-lg"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                }`}
-              >
-                {tab}
-              </button>
-            ))}
-          </div>
+      <TabHeader tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
+
+      <MenuList
+        items={menuData[activeTab]}
+        activeTab={activeTab}
+        getItemQuantity={getItemQuantity}
+        onAddItem={handleAddItem}
+        onUpdateQuantity={handleUpdateQuantity}
+        cartLength={cart.length}
+      />
+
+      {/* Go To Cart Button */}
+      {totalItems > 0 && (
+        <div className="fixed bottom-4 left-4 right-4 z-40">
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => {
+              // Navigate to cart route
+              router.push("/cart");
+            }}
+            className="w-full bg-[#54311B] hover:bg-[#3d2515] text-white py-4 rounded-lg font-medium shadow-lg transition-colors flex items-center justify-center gap-2"
+          >
+            <span>Go To Cart</span>
+            <span className="bg-white/20 text-white px-2 py-1 rounded-full text-sm">
+              {totalItems}
+            </span>
+          </motion.button>
         </div>
-      </div>
-
-      {/* Menu Items */}
-      <div className="px-4 py-6">
-        <motion.div
-          key={activeTab}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-          className="space-y-4"
-        >
-          {menuData[activeTab]?.map((item) => (
-            <motion.div
-              key={item.id}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.3 }}
-              className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow"
-            >
-              <div className="p-4">
-                <div className="flex items-start gap-4">
-                  {/* Product Image */}
-
-                  <div className="w-25 h-30  border border-green-700 flex self-center"></div>
-
-                  {/* Product Details */}
-                  <div className="flex-1">
-                    <div className="flex items-start justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        <h3 className="font-semibold text-gray-800 text-lg">
-                          {item.name}
-                        </h3>
-                        {item.isVeg && (
-                          <div className="w-4 h-4  border border-green-700 flex items-center justify-center">
-                            <div className="w-2 h-2 bg-green-700 rounded-full"></div>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    <p className="text-gray-500 text-sm mb-1">
-                      {item.calories} Kcal
-                    </p>
-                    <p className="text-gray-600 text-sm mb-4 leading-relaxed">
-                      {item.description}
-                    </p>
-
-                    <div className="flex items-center justify-between">
-                      <p className="text-xl font-bold text-gray-800">
-                        ₹ {item.price}
-                      </p>
-                      <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        className="bg-gray-800 hover:bg-gray-900 text-white px-6 py-2 rounded-full text-sm font-medium shadow-lg transition-colors"
-                      >
-                        Add Item
-                      </motion.button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </motion.div>
-      </div>
+      )}
     </div>
   );
 }
