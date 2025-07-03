@@ -98,21 +98,27 @@ export default function CoffeeOrderPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <TabHeader tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
+    <>
+      <div className="min-h-screen bg-gray-50">
+        <TabHeader
+          tabs={tabs}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+        />
 
-      <MenuList
-        items={menuData[activeTab]}
-        activeTab={activeTab}
-        getItemQuantity={getItemQuantity}
-        onAddItem={handleAddItem}
-        onUpdateQuantity={handleUpdateQuantity}
-        cartLength={cart.length}
-      />
+        <MenuList
+          items={menuData[activeTab]}
+          activeTab={activeTab}
+          getItemQuantity={getItemQuantity}
+          onAddItem={handleAddItem}
+          onUpdateQuantity={handleUpdateQuantity}
+          cartLength={cart.length}
+        />
 
-      {/* Go To Cart Button */}
+        {/* Go To Cart Button */}
+      </div>
       {totalItems > 0 && (
-        <div className="fixed bottom-4 left-4 right-4 z-40">
+        <div className="fixed bottom-0 pl-2 pr-2 pb-20 w-full z-40 bg-white h-10">
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
@@ -129,6 +135,6 @@ export default function CoffeeOrderPage() {
           </motion.button>
         </div>
       )}
-    </div>
+    </>
   );
 }
