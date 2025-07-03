@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux";
 import { updateQuantity, removeItem, clearCart } from "@/store/cartSlice";
+import { useRouter } from "next/navigation";
 
 export default function CartPage() {
   const dispatch = useAppDispatch();
@@ -12,7 +13,7 @@ export default function CartPage() {
     totalAmount,
     totalItems,
   } = useAppSelector((state) => state.cart);
-
+  const router = useRouter();
   const [showPaymentOptions, setShowPaymentOptions] = useState(false);
 
   const handlePlaceOrder = () => {
@@ -50,7 +51,7 @@ export default function CartPage() {
             whileTap={{ scale: 0.95 }}
             onClick={() => {
               // Navigate back to order page
-              window.location.href = "/order";
+              router.push("/order");
             }}
             className="bg-[#54311B] hover:bg-[#3d2515] text-white px-8 py-3 rounded-lg font-medium transition-colors"
           >
@@ -76,7 +77,7 @@ export default function CartPage() {
               whileTap={{ scale: 0.95 }}
               onClick={() => {
                 // Navigate back to order page
-                window.location.href = "/order";
+                router.push("/order");
               }}
               className="text-gray-600 hover:text-gray-800 text-2xl font-bold"
             >
