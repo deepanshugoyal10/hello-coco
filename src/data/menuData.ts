@@ -11,6 +11,7 @@ export const menuData: Record<string, MenuItem[]> = {
       calories: 168,
       image: "/api/placeholder/80/80",
       isVeg: true,
+      isAvailable: true,
     },
     {
       id: "2",
@@ -21,6 +22,7 @@ export const menuData: Record<string, MenuItem[]> = {
       calories: 368,
       image: "/api/placeholder/80/80",
       isVeg: true,
+      isAvailable: true,
     },
     {
       id: "3",
@@ -31,6 +33,7 @@ export const menuData: Record<string, MenuItem[]> = {
       calories: 243,
       image: "/api/placeholder/80/80",
       isVeg: true,
+      isAvailable: true,
     },
     {
       id: "23",
@@ -41,6 +44,7 @@ export const menuData: Record<string, MenuItem[]> = {
       calories: 243,
       image: "/api/placeholder/80/80",
       isVeg: true,
+      isAvailable: true,
     },
     {
       id: "33",
@@ -51,6 +55,7 @@ export const menuData: Record<string, MenuItem[]> = {
       calories: 243,
       image: "/api/placeholder/80/80",
       isVeg: true,
+      isAvailable: true,
     },
     {
       id: "43",
@@ -61,6 +66,7 @@ export const menuData: Record<string, MenuItem[]> = {
       calories: 243,
       image: "/api/placeholder/80/80",
       isVeg: true,
+      isAvailable: true,
     },
   ],
   Hot: [
@@ -72,6 +78,7 @@ export const menuData: Record<string, MenuItem[]> = {
       calories: 15,
       image: "/api/placeholder/80/80",
       isVeg: true,
+      isAvailable: true,
     },
     {
       id: "5",
@@ -81,6 +88,7 @@ export const menuData: Record<string, MenuItem[]> = {
       calories: 120,
       image: "/api/placeholder/80/80",
       isVeg: true,
+      isAvailable: true,
     },
     {
       id: "6",
@@ -90,6 +98,7 @@ export const menuData: Record<string, MenuItem[]> = {
       calories: 155,
       image: "/api/placeholder/80/80",
       isVeg: true,
+      isAvailable: true,
     },
   ],
   Sides: [
@@ -101,6 +110,7 @@ export const menuData: Record<string, MenuItem[]> = {
       calories: 280,
       image: "/api/placeholder/80/80",
       isVeg: true,
+      isAvailable: true,
     },
     {
       id: "8",
@@ -110,6 +120,7 @@ export const menuData: Record<string, MenuItem[]> = {
       calories: 320,
       image: "/api/placeholder/80/80",
       isVeg: true,
+      isAvailable: true,
     },
   ],
   Mercha: [
@@ -121,6 +132,7 @@ export const menuData: Record<string, MenuItem[]> = {
       calories: 0,
       image: "/api/placeholder/80/80",
       isVeg: true,
+      isAvailable: true,
     },
     {
       id: "10",
@@ -130,6 +142,7 @@ export const menuData: Record<string, MenuItem[]> = {
       calories: 0,
       image: "/api/placeholder/80/80",
       isVeg: true,
+      isAvailable: true,
     },
   ],
 };

@@ -6,6 +6,7 @@ export interface MenuItem {
   calories: number;
   image: string;
   isVeg: boolean;
+  isAvailable: boolean;
 }
 
 export interface CartItem extends MenuItem {
