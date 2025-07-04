@@ -19,12 +19,11 @@ export default function MenuList({
   onAddItem,
   onUpdateQuantity,
 }: MenuListProps) {
-  const items = useAppSelector((state) => state.cart.items);
+  const { products } = useAppSelector((state) => state.cart);
 
-  console.log("activeTab:", activeTab);
   const memoItems = useMemo(() => {
-    return items.filter((item) => item.category === activeTab);
-  }, [items, activeTab]);
+    return products.filter((item) => item.category === activeTab);
+  }, [products, activeTab]);
 
   return (
     <div className="h-full overflow-y-auto no-scrollbar px-4 py-6 pt-20 pb-24">

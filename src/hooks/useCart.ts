@@ -1,7 +1,6 @@
 // hooks/useCart.ts
 import { useState } from "react";
-import { CartItem, MenuItem } from "../types/menu";
-import { menuData } from "../data/menuData";
+import { CartItem, MenuItem } from "@/store/cartSlice";
 
 export const useCart = () => {
   const [cart, setCart] = useState<CartItem[]>([]);

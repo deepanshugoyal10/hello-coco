@@ -8,11 +8,9 @@ import { useRouter } from "next/navigation";
 
 export default function CartPage() {
   const dispatch = useAppDispatch();
-  const {
-    items: cart,
-    totalAmount,
-    totalItems,
-  } = useAppSelector((state) => state.cart);
+  const { cart, totalAmount, totalItems } = useAppSelector(
+    (state) => state.cart,
+  );
   const router = useRouter();
   const [showPaymentOptions, setShowPaymentOptions] = useState(false);
 

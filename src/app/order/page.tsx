@@ -1,45 +1,30 @@
 "use client";
 
 import React, { useState } from "react";
-import { menuData } from "@/data/menuData";
-import { useCart } from "@/hooks/useCart";
 import TabHeader from "@/components/TabHeader";
 import MenuList from "@/components/MenuList";
-import CartSection from "../../components/CartSection";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux";
 import { addItem, updateQuantity } from "@/store/cartSlice";
-import { MenuItem } from "@/store/cartSlice";
 
 export default function CoffeeOrderPage() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState("hot");
 
   const dispatch = useAppDispatch();
-  const { items: cart, totalItems } = useAppSelector((state) => state.cart);
+  const { cart, totalItems } = useAppSelector((state) => state.cart);
 
   const getItemQuantity = (itemId: string) => {
     return cart.find((item) => item.id === itemId)?.quantity || 0;
-  };
-
-  const handleAddItem = (itemId: string) => {
-    const menuItem = findMenuItem(itemId);
-    if (menuItem) {
-      dispatch(addItem(menuItem));
-    }
   };
 
   const handleUpdateQuantity = (itemId: string, change: number) => {
     dispatch(updateQuantity({ id: itemId, change }));
   };
 
-  const findMenuItem = (itemId: string): MenuItem | undefined => {
-    for (const category of Object.values(menuData)) {
-      const item = category.find((item) => item.id === itemId);
-      if (item) return item;
-    }
-    return undefined;
+  const handleAddItem = (itemId: string) => {
+    dispatch(addItem(itemId));
   };
 
   return (
@@ -63,7 +48,6 @@ export default function CoffeeOrderPage() {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={() => {
-              // Navigate to cart route
               router.push("/cart");
             }}
             className="w-full bg-[#54311B] hover:bg-[#3d2515] text-white py-4 rounded-lg font-medium shadow-lg transition-colors flex items-center justify-center gap-2"
