@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-interface MenuItem {
+export interface MenuItem {
   id: string;
   name: string;
   description: string;
@@ -8,29 +8,51 @@ interface MenuItem {
   calories: number;
   image: string;
   isVeg: boolean;
+  isAvailable: boolean;
+  category: string;
 }
 
-interface CartItem extends MenuItem {
+export interface CartItem extends MenuItem {
   quantity: number;
   totalPrice: number;
+}
+
+export interface TabItem {
+  id: string;
+  tabname: string;
+  display_name: string;
 }
 
 interface CartState {
   items: CartItem[];
   totalAmount: number;
   totalItems: number;
+  tabs: TabItem[];
 }
 
 const initialState: CartState = {
   items: [],
   totalAmount: 0,
   totalItems: 0,
+  tabs: [],
 };
 
 const cartSlice = createSlice({
   name: "cart",
   initialState,
   reducers: {
+    setAllProducts: (state, action: PayloadAction<MenuItem[]>) => {
+      state.items = action.payload.map((item) => ({
+        ...item,
+        quantity: 1,
+        totalPrice: item.price,
+      }));
+    },
+
+    setAllTabs: (state, action: PayloadAction<TabItem[]>) => {
+      state.tabs = action.payload;
+    },
+
     addItem: (state, action: PayloadAction<MenuItem>) => {
       const existingItem = state.items.find(
         (item) => item.id === action.payload.id,
@@ -93,6 +115,12 @@ const cartSlice = createSlice({
   },
 });
 
-export const { addItem, removeItem, updateQuantity, clearCart } =
-  cartSlice.actions;
+export const {
+  addItem,
+  removeItem,
+  updateQuantity,
+  clearCart,
+  setAllProducts,
+  setAllTabs,
+} = cartSlice.actions;
 export default cartSlice.reducer;

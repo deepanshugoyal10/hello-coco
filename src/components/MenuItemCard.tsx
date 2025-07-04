@@ -1,7 +1,7 @@
 // components/MenuItemCard.tsx
 import React from "react";
 import { motion } from "framer-motion";
-import { MenuItem } from "../types/menu";
+import { MenuItem } from "@/store/cartSlice";
 
 interface MenuItemCardProps {
   item: MenuItem;

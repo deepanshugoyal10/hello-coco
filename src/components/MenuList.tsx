@@ -1,11 +1,10 @@
 // components/MenuList.tsx
-import React from "react";
+import React, { useMemo } from "react";
 import { motion } from "framer-motion";
-import { MenuItem } from "../types/menu";
 import MenuItemCard from "./MenuItemCard";
+import { useAppSelector } from "@/hooks/redux";
 
 interface MenuListProps {
-  items: MenuItem[];
   activeTab: string;
   cartLength: number;
   getItemQuantity: (itemId: string) => number;
@@ -14,13 +13,19 @@ interface MenuListProps {
 }
 
 export default function MenuList({
-  items,
   activeTab,
   cartLength,
   getItemQuantity,
   onAddItem,
   onUpdateQuantity,
 }: MenuListProps) {
+  const items = useAppSelector((state) => state.cart.items);
+
+  console.log("activeTab:", activeTab);
+  const memoItems = useMemo(() => {
+    return items.filter((item) => item.category === activeTab);
+  }, [items, activeTab]);
+
   return (
     <div className="h-full overflow-y-auto no-scrollbar px-4 py-6 pt-20 pb-24">
       <motion.div
@@ -30,7 +35,7 @@ export default function MenuList({
         transition={{ duration: 0.3 }}
         className="space-y-4"
       >
-        {items?.map((item) => (
+        {memoItems?.map((item) => (
           <MenuItemCard
             key={item.id}
             item={item}
