@@ -1,6 +1,7 @@
 // utils/fetchProducts.ts
-import { CreateOrder } from "@/types/database.types";
+import { CreateOrder, FetchOrders, OrderStatus } from "@/types/database.types";
 import { supabase } from "@supa";
+import { data } from "framer-motion/client";
 
 export async function fetchProducts() {
   try {
@@ -67,6 +68,44 @@ export async function createOrder(order: CreateOrder) {
     return {
       success: false,
       error: "Failed to create order",
+    };
+  }
+}
+
+export async function fetchOrders() {
+  try {
+    const { data, error } = await supabase.from("orders").select("*");
+    if (error) throw error;
+    return {
+      success: true,
+      orders: data as FetchOrders[],
+      count: data.length,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: "Failed to fetch orders",
+      orders: [],
+      count: 0,
+    };
+  }
+}
+
+export async function updateOrderStatus(orderId: string, status: OrderStatus) {
+  try {
+    const { data, error } = await supabase
+      .from("orders")
+      .update({ status })
+      .eq("order_id", orderId)
+      .select()
+      .single();
+    if (error) throw error;
+    return { success: true, order: data, error: null };
+  } catch (error) {
+    return {
+      success: false,
+      data: [],
+      error: "Failed to update order status",
     };
   }
 }

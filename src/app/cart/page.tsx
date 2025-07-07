@@ -203,7 +203,7 @@ export default function CartPage() {
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              onClick={handlePlaceOrder}
+              onClick={() => handlePaymentSelect("counter")}
               className="w-full bg-[#54311B] hover:bg-[#3d2515] text-white py-4 rounded-lg font-medium transition-colors"
             >
               Place Order
