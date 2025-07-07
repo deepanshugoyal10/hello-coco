@@ -1,4 +1,5 @@
 // utils/fetchProducts.ts
+import { CreateOrder } from "@/types/database.types";
 import { supabase } from "../../lib/supabase";
 
 export async function fetchProducts() {
@@ -43,6 +44,29 @@ export async function fetchTabs() {
       error: "Failed to fetch tabs",
       tabs: [],
       count: 0,
+    };
+  }
+}
+
+export async function createOrder(order: CreateOrder) {
+  try {
+    const { data, error } = await supabase
+      .from("orders")
+      .insert(order)
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    return {
+      success: true,
+      order: data,
+      error: error,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: "Failed to create order",
     };
   }
 }
