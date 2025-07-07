@@ -5,6 +5,8 @@ import { motion } from "framer-motion";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux";
 import { updateQuantity, removeItem, clearCart } from "@/store/cartSlice";
 import { useRouter } from "next/navigation";
+import { CreateOrder, PaymentMethod } from "@/types/database.types";
+import { createOrder } from "@/helpers/api";
 
 export default function CartPage() {
   const dispatch = useAppDispatch();
@@ -13,13 +15,35 @@ export default function CartPage() {
   );
   const router = useRouter();
   const [showPaymentOptions, setShowPaymentOptions] = useState(false);
+  const [orderSubmittingLoader, setOrderSubmittingLoader] = useState(false);
+  console.log("orderSubmittingLoader:", orderSubmittingLoader);
 
-  const handlePlaceOrder = () => {
+  const handlePlaceOrder = async () => {
     setShowPaymentOptions(true);
   };
 
-  const handlePaymentSelect = (method: string) => {
-    console.log(`Payment method selected: ${method}`);
+  const handlePaymentSelect = async (method: PaymentMethod) => {
+    setOrderSubmittingLoader(true);
+
+    const orderReq: CreateOrder = {
+      customer_phone: "1234567890",
+      payment_method: method,
+      total_amount: totalAmount,
+      order_items: cart.map((item) => ({
+        id: item.id,
+        name: item.name,
+        quantity: item.quantity,
+        price: item.price,
+        totalPrice: item.totalPrice,
+      })),
+    };
+
+    const { success, order } = await createOrder(orderReq);
+    if (success) {
+      // show toast
+    }
+
+    setOrderSubmittingLoader(false);
     // Here you can handle the payment logic
     setShowPaymentOptions(false);
     // Clear cart after successful payment
