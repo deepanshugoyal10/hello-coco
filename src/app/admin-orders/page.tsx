@@ -2,12 +2,11 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { supabase } from "@supa";
 import { fetchOrders, updateOrderStatus } from "@/helpers/api";
 import { FetchOrders, OrderStatus } from "@/types/database.types";
 import { Loader2 } from "lucide-react";
 import clsx from "clsx";
-import { Toast } from "@/components/Toast";
+import { useToast } from "@/components/ToastProvider";
 
 export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<FetchOrders[]>([]);
@@ -15,19 +14,7 @@ export default function AdminOrdersPage() {
   const [openRecipeIndex, setOpenRecipeIndex] = useState<number | null>(null);
   const [updateStatusLoader, setUpdateStatusLoader] = useState(false);
 
-  const [toastOpen, setToastOpen] = useState(false);
-  const [toastMessage, setToastMessage] = useState("");
-  const [toastType, setToastType] = useState<"success" | "error">("success");
-
-  const showToast = (
-    message: string,
-    type: "success" | "error" = "success",
-  ) => {
-    setToastMessage(message);
-    setToastType(type);
-    setToastOpen(false);
-    setTimeout(() => setToastOpen(true), 50);
-  };
+  const { showToast } = useToast();
 
   useEffect(() => {
     fetchOrdersFromApi();
@@ -47,9 +34,13 @@ export default function AdminOrdersPage() {
     );
     if (success) {
       setSelectedOrder(order);
-      showToast(`Order updated successfully to ${order.status}`, "success");
+      showToast(
+        `Order updated successfully to ${order.status}`,
+        "success",
+        "top-center",
+      );
     } else {
-      showToast(error || "Failed to update order.", "error");
+      showToast(error || "Failed to update order.", "error", "top-center");
     }
     setUpdateStatusLoader(false);
   };
@@ -216,16 +207,6 @@ export default function AdminOrdersPage() {
           </motion.div>
         )}
       </div>
-      {toastMessage && (
-        <Toast
-          open={toastOpen}
-          setOpen={setToastOpen}
-          message={toastMessage}
-          type={toastType}
-          position="top-center"
-          autoCloseSeconds={5}
-        />
-      )}
     </div>
   );
 }

@@ -1,64 +1,66 @@
 "use client";
 
-import * as React from "react";
-import * as ToastPrimitive from "@radix-ui/react-toast";
-import clsx from "clsx";
-import { CheckCircle, XCircle } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { CheckCircle2, AlertTriangle } from "lucide-react";
+import { useEffect } from "react";
 
-export type ToastType = "success" | "error";
-export type ToastPosition = "top-center" | "bottom-center";
+export type ToastProps = {
+  open: boolean;
+  message: string;
+  type?: "success" | "error";
+  position?: "top-center" | "bottom-center";
+  autoCloseSeconds?: number;
+  onClose: () => void;
+};
 
-export function Toast({
+export const Toast = ({
   open,
-  setOpen,
   message,
   type = "success",
   position = "top-center",
   autoCloseSeconds = 5,
-}: {
-  open: boolean;
-  setOpen: (val: boolean) => void;
-  message: string;
-  type?: ToastType;
-  position?: ToastPosition;
-  autoCloseSeconds?: number;
-}) {
-  const positionClass = {
-    "top-center": "top-4 left-1/2 -translate-x-1/2",
-    "bottom-center": "bottom-4 left-1/2 -translate-x-1/2",
-  };
-
-  const typeClass = {
-    success: "bg-green-500 text-white",
-    error: "bg-red-500 text-white",
-  };
-
-  const Icon = type === "success" ? CheckCircle : XCircle;
-
-  React.useEffect(() => {
+  onClose,
+}: ToastProps) => {
+  useEffect(() => {
     if (open) {
-      setTimeout(() => setOpen(false), autoCloseSeconds * 1000);
+      const timer = setTimeout(onClose, autoCloseSeconds * 1000);
+      return () => clearTimeout(timer);
     }
-  }, [open, autoCloseSeconds, setOpen]);
+  }, [open, autoCloseSeconds, onClose]);
+
+  const icon =
+    type === "success" ? (
+      <CheckCircle2 className="text-green-600" />
+    ) : (
+      <AlertTriangle className="text-red-600" />
+    );
+
+  const bg =
+    type === "success"
+      ? "bg-green-100 text-green-800 border-green-400"
+      : "bg-red-100 text-red-800 border-red-400";
+
+  const positionClasses =
+    position === "top-center"
+      ? "top-4 left-1/2 -translate-x-1/2"
+      : "bottom-4 left-1/2 -translate-x-1/2";
 
   return (
-    <ToastPrimitive.Provider swipeDirection="up">
-      <ToastPrimitive.Root
-        className={clsx(
-          "fixed z-50 px-5 py-3 rounded-md shadow-xl transition-all duration-300 w-fit flex items-center gap-2",
-          positionClass[position],
-          typeClass[type],
-        )}
-        open={open}
-        onOpenChange={setOpen}
-      >
-        <Icon className="w-5 h-5 text-white" />
-        <ToastPrimitive.Title className="text-sm font-medium">
-          {message}
-        </ToastPrimitive.Title>
-      </ToastPrimitive.Root>
-
-      <ToastPrimitive.Viewport className="fixed inset-0 pointer-events-none" />
-    </ToastPrimitive.Provider>
+    <AnimatePresence>
+      {open && (
+        <motion.div
+          initial={{ opacity: 0, y: position === "top-center" ? -20 : 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: position === "top-center" ? -20 : 20 }}
+          transition={{ duration: 0.3 }}
+          className={`fixed z-50 px-4 py-3 rounded-md border shadow-md ${bg} ${positionClasses}`}
+        >
+          <div className="flex items-center gap-2">
+            {icon}
+            <span className="text-sm font-medium">{message}</span>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
-}
+};
