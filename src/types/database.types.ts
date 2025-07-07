@@ -1,4 +1,3 @@
-// types/database.ts
 export interface Customer {
   id: string;
   phone: string;
@@ -33,4 +32,21 @@ export interface OTPVerification {
   expires_at: string;
   attempts: number;
   created_at: string;
+}
+
+export type PaymentMethod = "counter" | "upi";
+
+export interface CreateOrder {
+  customer_phone: string;
+  order_items: CreateOrderItem[];
+  total_amount: number;
+  payment_method: PaymentMethod;
+}
+
+export interface CreateOrderItem {
+  id: string;
+  name: string;
+  quantity: number;
+  price: number;
+  totalPrice: number;
 }
