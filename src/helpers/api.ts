@@ -1,6 +1,6 @@
 // utils/fetchProducts.ts
 import { CreateOrder } from "@/types/database.types";
-import { supabase } from "../../lib/supabase";
+import { supabase } from "@supa";
 
 export async function fetchProducts() {
   try {

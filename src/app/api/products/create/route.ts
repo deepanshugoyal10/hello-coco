@@ -1,5 +1,5 @@
 // app/api/products/route.ts
-import { supabase } from "../../../../../lib/supabase";
+import { supabase } from "@supa";
 
 import { NextRequest } from "next/server";
 

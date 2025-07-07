@@ -1,5 +1,5 @@
 import { fetchProducts } from "@/helpers/api";
-import { supabase } from "../../../../../lib/supabase";
+import { supabase } from "@supa";
 
 export async function GET() {
   const result = await fetchProducts();
